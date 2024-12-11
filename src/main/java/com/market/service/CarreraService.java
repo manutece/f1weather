@@ -1,6 +1,8 @@
 package com.market.service;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.catalina.util.URLEncoder;
 import org.springframework.stereotype.Service;
@@ -20,7 +22,7 @@ public class CarreraService {
 		this.weatherService = weatherService;		
 	}
 	
-	public Sesion getCarreraInfo(String circuito,String tipoSesion, int año) {
+	public Sesion getCarreraInfo(String circuito, String tipoSesion, int año) {
 		System.out.println("PRE FETCH F1");
 		Sesion carreraData = f1Service.getF1SessionData(circuito, tipoSesion, año);
 		String ciudad = "" + carreraData.getLocation() + "," +carreraData.getCountry_name();
@@ -32,6 +34,14 @@ public class CarreraService {
 		carreraData.setClima(weatherData);
 		
 		return carreraData;
+	}
+
+	public List<String> getCircuitos(int año) {
+		List<Sesion> sesiones = f1Service.getCircuitos(año);
+		return sesiones.stream()
+				.map(Sesion::getCircuit_short_name)
+				.distinct()
+				.collect(Collectors.toList());
 	}
 
 
