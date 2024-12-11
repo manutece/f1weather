@@ -5,6 +5,10 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.market.model.Sesion;
+
 @Service
 public class F1Service {
 
@@ -12,19 +16,32 @@ public class F1Service {
 	private String apiF1Url;
 	
 	private final RestTemplate restTemplate;
+	private final ObjectMapper objectMapper;
 	
 	public F1Service(RestTemplate restTemplate) {
 		this.restTemplate = restTemplate;
+		this.objectMapper = new ObjectMapper();
 	}
 	
-	public String getF1SessionData(int circuitKey, int year) {
-		String url = UriComponentsBuilder.fromHttpUrl(apiF1Url)
+	public Sesion getF1SessionData(String nombreCircuito, String tipoSesion, int year) {
+		try {
+			String url = UriComponentsBuilder.fromHttpUrl(apiF1Url)
 				.pathSegment("sessions")
-				.queryParam("circuit_key", circuitKey)
+				.queryParam("circuit_short_name", nombreCircuito)
+				.queryParam("session_name", tipoSesion)
 				.queryParam("year", year)
 				.toUriString();
-		System.out.println(url);
+			System.out.println(url);
+			String sesionJson = restTemplate.getForObject(url, String.class);
+			System.out.println(sesionJson);
+			JsonNode sesionData = objectMapper.readTree(sesionJson).get(0);
+			Sesion ret = objectMapper.treeToValue(sesionData, Sesion.class);
+			System.out.println(ret.toString());
+			return ret;
 		
-		return restTemplate.getForObject(url, String.class);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 }

@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;*/
 import org.springframework.web.bind.annotation.*;
+
+import com.market.model.Sesion;
 import com.market.service.CarreraService;
 
 @RestController
@@ -20,8 +22,8 @@ public class CarreraController {
 	}
 	
 	@GetMapping("/carrera")
-	public String getCarrera(@RequestParam String carreraNombre, @RequestParam int año) {
-		return carreraService.getCarreraInfo(carreraNombre, año);
+	public Sesion getCarrera(@RequestParam String circuitoNombre, @RequestParam String tipoSesion, @RequestParam int año) {
+		return carreraService.getCarreraInfo(circuitoNombre,tipoSesion, año);
 	}
 	
 }

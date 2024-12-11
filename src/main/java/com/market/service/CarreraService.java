@@ -1,6 +1,13 @@
 package com.market.service;
 
+import java.nio.charset.StandardCharsets;
+
+import org.apache.catalina.util.URLEncoder;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.market.model.Clima;
+import com.market.model.Sesion;
 
 @Service
 public class CarreraService {
@@ -13,35 +20,19 @@ public class CarreraService {
 		this.weatherService = weatherService;		
 	}
 	
-	public String getCarreraInfo(String carrera, int año) {
-		System.out.println("ARRANCA GET CARRERA\n");
-		int carreraKey = getCarreraKey(carrera);
+	public Sesion getCarreraInfo(String circuito,String tipoSesion, int año) {
 		System.out.println("PRE FETCH F1");
-		String carreraData = f1Service.getF1SessionData(carreraKey, año);
+		Sesion carreraData = f1Service.getF1SessionData(circuito, tipoSesion, año);
+		String ciudad = "" + carreraData.getLocation() + "," +carreraData.getCountry_name();
+		String fecha = carreraData.getDate_start();
 		
-		String ciudad = getCiudad(carreraData);
-		String fecha = getFecha(carreraData);
+		System.out.println("Fecha: " + fecha + "\nLocacion: " + ciudad);
+		Clima weatherData = weatherService.getWeatherData(ciudad, fecha.replace("+00:00", ""));
+		System.out.println("Despues de clima");
+		carreraData.setClima(weatherData);
 		
-		System.out.println("PRE FETCH WEATHER");
-		String weatherData = weatherService.getWeatherData(ciudad, fecha);
-		
-		return String.format("Carrera: %s\nClima: %s", carreraData, weatherData);
+		return carreraData;
 	}
 
-	private int getCarreraKey(String carrera) {
-		System.out.println("GET CARRERA KEY\n");
-		return 150;
-	}
-
-	private String getFecha(String carreraData) {
-		//tener en cuenta gmt_offset
-		System.out.println("GET FECHA\n");
-		return "2020-12-15T05:00:00";
-	}
-
-	private String getCiudad(String carreraData) {
-		System.out.println("GET CIUDAD\n");
-		return "London, UK";
-	}
 
 }
