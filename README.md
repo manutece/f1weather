@@ -91,6 +91,6 @@ Devuelve un objeto `Sesion` que incluye:
 
 - **Java** (versión 11 o superior).
 - **Spring Boot** (versión 2.5 o superior).
-- **RestTemplate** para llamadas a APIs externas.
+- **HttpClient** para llamadas a APIs externas.
 - **Maven** para la gestión de dependencias.
 - **Jackson** para serialización/deserialización JSON.
